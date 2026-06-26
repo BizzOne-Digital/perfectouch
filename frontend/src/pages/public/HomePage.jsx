@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/public/Navbar';
 import Footer from '../../components/public/Footer';
@@ -13,9 +13,9 @@ const BEFORE_2 = '/ext1.png';
 const AFTER_2 = '/ext2.png';
 
 const SERVICES_DATA = [
-  { name: 'Interior Detail', price: '$149', duration: '2–3 hrs', icon: 'Sparkle', features: ['Deep vacuum & shampoo', 'Dashboard & console wipe-down', 'Window cleaning', 'Seat & upholstery cleaning', 'Door panels & trunk', 'Odor elimination'], color: 'from-blue-600 to-blue-800' },
-  { name: 'Exterior Detail', price: '$119', duration: '1.5–2 hrs', icon: 'Car', features: ['Hand wash & rinse', 'Wheel & tire cleaning', 'Tire shine', 'Exterior window clean', 'Paint protection wipe-down', 'Trim restoration'], color: 'from-blue-500 to-indigo-700', popular: true },
-  { name: 'Full Detail', price: '$249', duration: '4–5 hrs', icon: 'Shield', features: ['Full interior detail', 'Full exterior detail', 'Engine bay cleaning', 'Paint protection treatment', 'Clay bar treatment', 'Priority scheduling'], color: 'from-indigo-600 to-blue-900' }
+  { name: 'Interior Detail', price: '$149', duration: '2–3 hrs', features: ['Deep vacuum & shampoo', 'Dashboard & console wipe-down', 'Window cleaning', 'Seat & upholstery cleaning', 'Door panels & trunk', 'Odor elimination'], color: 'from-blue-600 to-blue-800' },
+  { name: 'Exterior Detail', price: '$119', duration: '1.5–2 hrs', features: ['Hand wash & rinse', 'Wheel & tire cleaning', 'Tire shine', 'Exterior window clean', 'Paint protection wipe-down', 'Trim restoration'], color: 'from-blue-500 to-indigo-700', popular: true },
+  { name: 'Full Detail', price: '$249', duration: '4–5 hrs', features: ['Full interior detail', 'Full exterior detail', 'Engine bay cleaning', 'Paint protection treatment', 'Clay bar treatment', 'Priority scheduling'], color: 'from-indigo-600 to-blue-900' }
 ];
 
 const TESTIMONIALS = [
@@ -45,15 +45,15 @@ export default function HomePage() {
       {/* ====== HERO ====== */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         <div className="absolute inset-0">
-          <img src={HERO_BG} alt="Auto Detailing" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/90 to-gray-950/60" />
+          <img src={HERO_BG} alt="Auto Detailing" className="w-full h-full object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/95 to-gray-950/70" />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent" />
         </div>
         {/* Animated orbs */}
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-brand-blue/15 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-blue-800/10 rounded-full blur-3xl animate-pulse" style={{animationDelay:'1s'}} />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/30 text-brand-blue px-4 py-2 rounded-full text-sm font-medium mb-6">
               <div className="w-2 h-2 bg-brand-blue rounded-full animate-pulse" />
@@ -159,8 +159,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {displayBeforeAfter.slice(0, 4).map((item, idx) => (
               <div key={idx}>
-                <BeforeAfterSlider before={item.beforeImage || BEFORE_1} after={item.afterImage || AFTER_1} label={item.description || `Detail Job ${idx + 1}`} />
-                {item.description && <p className="text-center text-sm text-gray-500 mt-3 font-medium">{item.description}</p>}
+                <BeforeAfterSlider
+                  before={item.beforeImage}
+                  after={item.afterImage}
+                  label={item.description || `Detail Job ${idx + 1}`}
+                />
+                {item.description && (
+                  <p className="text-center text-sm text-gray-500 mt-3 font-medium">{item.description}</p>
+                )}
               </div>
             ))}
           </div>
@@ -180,18 +186,16 @@ export default function HomePage() {
             <h2 className="section-title text-white mt-2">Watch the <span className="text-brand-blue">Process</span></h2>
             <p className="text-gray-500 mt-4 max-w-xl mx-auto">See how PerfectTouch transforms vehicles — precision and care in every step.</p>
           </div>
-          <div className="relative rounded-2xl overflow-hidden border border-gray-800 shadow-2xl shadow-blue-500/10 bg-gray-900 group">
+          <div className="relative rounded-2xl overflow-hidden border border-gray-800 shadow-2xl shadow-blue-500/10 bg-gray-900">
             <video
               className="w-full aspect-video object-cover"
               controls
               playsInline
-              poster=""
               preload="metadata"
             >
               <source src="/vid.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-            {/* Overlay glow border */}
             <div className="absolute inset-0 rounded-2xl ring-1 ring-brand-blue/20 pointer-events-none" />
           </div>
           <p className="text-center text-gray-600 text-sm mt-4">Professional Mobile Auto Detailing · Sullivan County, NY</p>
