@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0a0a0f;
+    color: #e2e8f0;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-blue hover:bg-brand-blue-dark text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/40;
+  }
+  .btn-outline {
+    @apply border-2 border-brand-blue text-brand-blue hover:bg-brand-blue hover:text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300;
+  }
+  .section-title {
+    @apply font-display text-4xl md:text-5xl font-bold;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20;
+  }
+  .dark-card {
+    @apply bg-gray-900 border border-gray-800 rounded-2xl;
+  }
+  .dark-input {
+    @apply w-full bg-gray-800 border border-gray-700 text-white placeholder-gray-500 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue transition-colors;
+  }
+  .badge-status-pending {
+    @apply bg-yellow-500/20 text-yellow-400 px-2.5 py-0.5 rounded-full text-xs font-medium border border-yellow-500/30;
+  }
+  .badge-status-confirmed {
+    @apply bg-blue-500/20 text-blue-400 px-2.5 py-0.5 rounded-full text-xs font-medium border border-blue-500/30;
+  }
+  .badge-status-completed {
+    @apply bg-green-500/20 text-green-400 px-2.5 py-0.5 rounded-full text-xs font-medium border border-green-500/30;
+  }
+  .badge-status-cancelled {
+    @apply bg-red-500/20 text-red-400 px-2.5 py-0.5 rounded-full text-xs font-medium border border-red-500/30;
+  }
+}
+
+/* Before/After Slider */
+.before-after-slider {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  cursor: ew-resize;
+  user-select: none;
+}
+
+.slider-handle {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 100%;
+  background: white;
+  cursor: ew-resize;
+  z-index: 10;
+}
+
+.slider-handle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: #0057FF;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 4px 20px rgba(0,87,255,0.6);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0f1117; }
+::-webkit-scrollbar-thumb { background: #0057FF; border-radius: 4px; }
+
+/* Admin sidebar */
+.admin-sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:bg-white/5 hover:text-white transition-all duration-200 font-medium;
+}
+.admin-sidebar-link.active {
+  @apply bg-brand-blue text-white;
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 30px rgba(0, 87, 255, 0.3);
+}
+.text-glow {
+  text-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+}
