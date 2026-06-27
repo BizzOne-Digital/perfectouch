@@ -23,7 +23,7 @@ exports.createBooking = async (req, res) => {
 
     const basePrice = PRICES[service] || 0;
     const discountApplied = isFirstTime;
-    const finalPrice = discountApplied ? basePrice * 0.5 : basePrice;
+    const finalPrice = discountApplied ? basePrice * 0.85 : basePrice;
 
     const booking = await Booking.create({
       customerName, email, phone, service, vehicleType,
@@ -40,7 +40,7 @@ exports.createBooking = async (req, res) => {
         <p><strong>Service:</strong> ${service}</p>
         <p><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</p>
         <p><strong>Time:</strong> ${timeSlot}</p>
-        <p><strong>Price:</strong> $${finalPrice}${discountApplied ? ' (50% First-Time Discount Applied!)' : ''}</p>
+        <p><strong>Price:</strong> $${finalPrice}${discountApplied ? ' (15% First-Time Discount Applied!)' : ''}</p>
         <p>We'll come to you at: ${address}</p>
         <p>Questions? Call us: 845-866-2430</p>`
       );

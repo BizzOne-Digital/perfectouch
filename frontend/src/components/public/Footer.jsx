@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)', backgroundSize: '40px 40px'}} />
         <div className="relative max-w-4xl mx-auto text-center">
           <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">Ready for a Showroom Shine?</h2>
-          <p className="text-blue-200 mb-6 text-lg">First-time customers get 50% off — We come to you!</p>
+          <p className="text-blue-200 mb-6 text-lg">First-time customers get 15% off — We come to you!</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/booking" className="bg-white text-brand-blue font-bold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors">
               Book Your Detail Now

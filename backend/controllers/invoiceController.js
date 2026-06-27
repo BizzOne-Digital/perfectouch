@@ -16,7 +16,7 @@ exports.generateInvoice = async (req, res) => {
     const booking = await Booking.findById(req.params.bookingId);
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
-    const discountAmount = booking.discountApplied ? booking.price * 0.5 : 0;
+    const discountAmount = booking.discountApplied ? booking.price * 0.85 : 0;
     const invoice = await Invoice.create({
       booking: booking._id,
       customerName: booking.customerName,
@@ -28,7 +28,7 @@ exports.generateInvoice = async (req, res) => {
       serviceDate: booking.date,
       basePrice: booking.price,
       discount: discountAmount,
-      discountPercent: booking.discountApplied ? 50 : 0,
+      discountPercent: booking.discountApplied ? 15 : 0,
       totalAmount: booking.finalPrice,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     });
@@ -96,7 +96,7 @@ exports.sendInvoiceEmail = async (req, res) => {
           <p><strong>Date:</strong> ${new Date(invoice.serviceDate).toLocaleDateString()}</p>
           <hr/>
           <p><strong>Base Price:</strong> $${invoice.basePrice}</p>
-          ${invoice.discount > 0 ? `<p style="color:#22c55e"><strong>First-Time Discount (50%):</strong> -$${invoice.discount}</p>` : ''}
+          ${invoice.discount > 0 ? `<p style="color:#22c55e"><strong>First-Time Discount (15%):</strong> -$${invoice.discount}</p>` : ''}
           <h3>Total Due: $${invoice.totalAmount}</h3>
           <p>Due Date: ${new Date(invoice.dueDate).toLocaleDateString()}</p>
         </div>

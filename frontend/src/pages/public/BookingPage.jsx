@@ -20,7 +20,7 @@ export default function BookingPage() {
   const [form, setForm] = useState({ customerName:'', email:'', phone:'', service:'', vehicleType:'Sedan', vehicleMake:'', vehicleModel:'', vehicleYear:'', date:'', timeSlot:'', address:'', notes:'', isFirstTime:false });
 
   const selectedService = SERVICES.find(s => s.name === form.service);
-  const finalPrice = selectedService ? (form.isFirstTime ? selectedService.price * 0.5 : selectedService.price) : 0;
+  const finalPrice = selectedService ? (form.isFirstTime ? selectedService.price * 0.85 : selectedService.price) : 0;
   const update = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSubmit = async () => {
@@ -50,7 +50,7 @@ export default function BookingPage() {
           <p className="text-gray-400 mb-6">Confirmation sent to <strong className="text-white">{form.email}</strong>.</p>
           {form.isFirstTime && (
             <div className="bg-brand-blue/10 border border-brand-blue/30 rounded-xl p-4 mb-6">
-              <p className="text-brand-blue font-bold text-lg">50% Discount Applied!</p>
+              <p className="text-brand-blue font-bold text-lg">15% Discount Applied!</p>
               <p className="text-gray-400">Your price: <strong className="text-white">${finalPrice}</strong></p>
             </div>
           )}
@@ -73,7 +73,7 @@ export default function BookingPage() {
           <p className="text-gray-500">We'll come to your location — no shop visit needed.</p>
           <div className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/20 rounded-full px-5 py-2 mt-4">
             <span className="text-brand-blue"><Icons.Tag /></span>
-            <span className="text-brand-blue font-semibold text-sm">First-time customers save 50%!</span>
+            <span className="text-brand-blue font-semibold text-sm">First-time customers save 15%!</span>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default function BookingPage() {
                     className={`text-left p-6 rounded-2xl border-2 transition-all ${form.service === s.name ? 'border-brand-blue bg-brand-blue/10' : 'border-gray-700 hover:border-gray-600 bg-gray-800'}`}>
                     <div className="font-display text-xl font-bold text-white">{s.name}</div>
                     <div className="text-3xl font-bold text-brand-blue mt-1">${s.price}</div>
-                    {form.isFirstTime && <div className="text-green-400 text-sm font-medium">${s.price * 0.5} with 50% off</div>}
+                    {form.isFirstTime && <div className="text-green-400 text-sm font-medium">${s.price * 0.85} with 15% off</div>}
                     <div className="text-gray-500 text-sm mt-1 flex items-center gap-1"><Icons.Clock />{s.duration}</div>
                   </button>
                 ))}
@@ -110,7 +110,7 @@ export default function BookingPage() {
               <div className="mt-6 p-4 bg-gray-800 border border-gray-700 rounded-xl">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input type="checkbox" checked={form.isFirstTime} onChange={e => update('isFirstTime', e.target.checked)} className="w-5 h-5 accent-brand-blue" />
-                  <div><span className="font-medium text-white">I'm a first-time customer </span><span className="text-brand-blue font-bold">(50% discount!)</span></div>
+                  <div><span className="font-medium text-white">I'm a first-time customer </span><span className="text-brand-blue font-bold">(15% discount!)</span></div>
                 </label>
               </div>
               <button onClick={() => setStep(2)} disabled={!form.service} className="btn-primary w-full mt-6 py-4 disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
@@ -200,8 +200,8 @@ export default function BookingPage() {
                   </div>
                   {form.isFirstTime && (
                     <div className="flex justify-between items-center mb-2 text-green-400">
-                      <span>First-Time Discount (50%)</span>
-                      <span>-${selectedService ? selectedService.price * 0.5 : 0}</span>
+                      <span>First-Time Discount (15%)</span>
+                      <span>-${selectedService ? selectedService.price * 0.85 : 0}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center border-t border-brand-blue/20 pt-3 mt-3">

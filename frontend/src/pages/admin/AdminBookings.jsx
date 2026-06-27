@@ -92,7 +92,7 @@ export default function AdminBookings() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-bold text-brand-blue">${b.finalPrice}</div>
-                      {b.discountApplied && <div className="text-xs text-green-500">50% discount</div>}
+                      {b.discountApplied && <div className="text-xs text-green-500">15% discount</div>}
                     </td>
                     <td className="px-6 py-4">
                       <select value={b.status} onChange={e => updateStatus(b._id, e.target.value)} className={selectCls}>
@@ -124,7 +124,7 @@ export default function AdminBookings() {
               <button onClick={() => setSelected(null)} className="text-gray-500 hover:text-white"><Icons.Close /></button>
             </div>
             <div className="space-y-3 text-sm">
-              {[['Customer',selected.customerName],['Email',selected.email],['Phone',selected.phone],['Service',selected.service],['Vehicle',`${selected.vehicleYear||''} ${selected.vehicleMake||''} ${selected.vehicleModel||''} ${selected.vehicleType}`.trim()],['Date',new Date(selected.date).toLocaleDateString()],['Time',selected.timeSlot],['Address',selected.address],['Base Price',`$${selected.price}`],['Discount',selected.discountApplied?'Yes - 50% First Time':'None'],['Final Price',`$${selected.finalPrice}`],['Invoice Generated',selected.invoiceGenerated?'Yes':'No'],selected.notes?['Notes',selected.notes]:null].filter(Boolean).map(([k,v]) => (
+              {[['Customer',selected.customerName],['Email',selected.email],['Phone',selected.phone],['Service',selected.service],['Vehicle',`${selected.vehicleYear||''} ${selected.vehicleMake||''} ${selected.vehicleModel||''} ${selected.vehicleType}`.trim()],['Date',new Date(selected.date).toLocaleDateString()],['Time',selected.timeSlot],['Address',selected.address],['Base Price',`$${selected.price}`],['Discount',selected.discountApplied?'Yes - 15% First Time':'None'],['Final Price',`$${selected.finalPrice}`],['Invoice Generated',selected.invoiceGenerated?'Yes':'No'],selected.notes?['Notes',selected.notes]:null].filter(Boolean).map(([k,v]) => (
                 <div key={k} className="flex justify-between py-2 border-b border-gray-800">
                   <span className="text-gray-500">{k}</span>
                   <span className="font-medium text-white">{v}</span>

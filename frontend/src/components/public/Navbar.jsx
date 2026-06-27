@@ -90,7 +90,7 @@ export default function Navbar() {
                 <span>845-866-2430</span>
               </a>
               <Link to="/booking" className="block text-center btn-primary mt-2 py-3">
-                Book Now — 50% Off First Visit!
+                Book Now — 15% Off First Visit!
               </Link>
             </div>
           </div>

@@ -15,12 +15,12 @@ const AFTER_2 = '/ext2.png';
 const SERVICES_DATA = [
   { name: 'Interior Detail', price: '$149', duration: '2–3 hrs', features: ['Deep vacuum & shampoo', 'Dashboard & console wipe-down', 'Window cleaning', 'Seat & upholstery cleaning', 'Door panels & trunk', 'Odor elimination'], color: 'from-blue-600 to-blue-800' },
   { name: 'Exterior Detail', price: '$119', duration: '1.5–2 hrs', features: ['Hand wash & rinse', 'Wheel & tire cleaning', 'Tire shine', 'Exterior window clean', 'Paint protection wipe-down', 'Trim restoration'], color: 'from-blue-500 to-indigo-700', popular: true },
-  { name: 'Full Detail', price: '$249', duration: '4–5 hrs', features: ['Full interior detail', 'Full exterior detail', 'Engine bay cleaning', 'Paint protection treatment', 'Clay bar treatment', 'Priority scheduling'], color: 'from-indigo-600 to-blue-900' }
+  { name: 'Full Detail', price: '$249', duration: '4–5 hrs', features: ['Full interior detail', 'Full exterior detail', 'Spray ceramic sealant', 'Priority scheduling'], color: 'from-indigo-600 to-blue-900' }
 ];
 
 const TESTIMONIALS = [
   { name: 'Mike R.', rating: 5, text: "Joshua did an incredible job on my truck — looked brand new! Mobile service is super convenient and the price is unbeatable." },
-  { name: 'Sarah T.', rating: 5, text: "Used the 50% first-time discount and I'm blown away by the results. My car hasn't looked this clean since I bought it!" },
+  { name: 'Sarah T.', rating: 5, text: "Used the 15% first-time discount and I'm blown away by the results. My car hasn't looked this clean since I bought it!" },
   { name: 'James K.', rating: 5, text: "Fast, professional, and thorough. He came to my office while I worked. The full detail was worth every penny." }
 ];
 
@@ -68,12 +68,12 @@ export default function HomePage() {
             </p>
             <div className="inline-flex items-center gap-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-5 py-3 mb-8">
               <span className="text-yellow-400"><Icons.Tag /></span>
-              <span className="text-yellow-400 font-bold text-lg">50% OFF</span>
+              <span className="text-yellow-400 font-bold text-lg">15% OFF</span>
               <span className="text-gray-400">your first detail — limited time!</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link to="/booking" className="btn-primary text-center text-lg py-4 px-10 shadow-xl shadow-blue-500/30">
-                Book Now — 50% Off!
+                Book Now — 15% Off!
               </Link>
               <a href="tel:8458662430" className="flex items-center justify-center gap-2 border-2 border-gray-700 text-gray-300 hover:border-gray-500 hover:text-white transition-all font-semibold py-4 px-8 rounded-lg">
                 <Icons.Phone /> Call 845-866-2430
@@ -141,7 +141,7 @@ export default function HomePage() {
               <span className="text-brand-blue"><Icons.Tag /></span>
               <p className="text-gray-300">
                 <span className="font-bold text-brand-blue">First-Time Customers: </span>
-                Get <span className="font-bold text-brand-blue">50% off</span> any service!
+                Get <span className="font-bold text-brand-blue">15% off</span> any service!
               </p>
             </div>
           </div>
@@ -230,9 +230,9 @@ export default function HomePage() {
             </div>
             <div className="bg-gradient-to-br from-brand-blue to-blue-900 rounded-3xl p-10 text-white border border-brand-blue/30 shadow-2xl shadow-blue-500/20">
               <h3 className="font-display text-3xl font-bold mb-2">First Time Customer?</h3>
-              <p className="text-blue-200 mb-6 text-lg">Save 50% on your first detail!</p>
+              <p className="text-blue-200 mb-6 text-lg">Save 15% on your first detail!</p>
               <div className="space-y-3 mb-8">
-                {[['Interior Detail', '$149', '$74.50'], ['Exterior Detail', '$119', '$59.50'], ['Full Detail', '$249', '$124.50']].map(([s, orig, disc]) => (
+                {[['Interior Detail', '$149', '$126.65'], ['Exterior Detail', '$119', '$101.15'], ['Full Detail', '$249', '$211.65']].map(([s, orig, disc]) => (
                   <div key={s} className="flex items-center justify-between bg-black/20 rounded-xl px-4 py-3 border border-white/10">
                     <span className="font-medium">{s}</span>
                     <div className="text-right">
@@ -243,7 +243,7 @@ export default function HomePage() {
                 ))}
               </div>
               <Link to="/booking" className="block text-center bg-white text-brand-blue font-bold py-4 rounded-xl hover:bg-blue-50 transition-colors text-lg">
-                Claim Your 50% Discount
+                Claim Your 15% Discount
               </Link>
               <p className="text-blue-300 text-xs text-center mt-3">Check "First Time Customer" when booking</p>
             </div>

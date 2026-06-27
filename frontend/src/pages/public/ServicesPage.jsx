@@ -6,7 +6,7 @@ import { Icons } from '../../components/public/Icons';
 const SERVICES = [
   { name: 'Interior Detail', price: 149, duration: '2–3 hours', description: "Bring your vehicle's interior back to life with a deep cleaning designed to remove dirt, dust, and everyday buildup.", features: ['Full vacuum of seats, floors, and trunk', 'Shampoo upholstery & floor mats', 'Dashboard, console & trim wipe-down', 'Window cleaning (interior)', 'Door panel cleaning', 'Air vent detailing', 'Odor elimination treatment'], gradient: 'from-blue-600 to-blue-800' },
   { name: 'Exterior Detail', price: 119, duration: '1.5–2 hours', description: 'Comprehensive exterior detailing including wash, wheel and tire cleaning, and finish enhancement to restore shine and protection.', features: ['Professional hand wash & rinse', 'Wheel & rim cleaning', 'Tire cleaning & shine application', 'Exterior window cleaning', 'Paint surface wipe & protection', 'Chrome & trim restoration', 'Door jamb cleaning'], gradient: 'from-blue-500 to-indigo-700', popular: true },
-  { name: 'Full Detail', price: 249, duration: '4–5 hours', description: "Our Full Detail service combines interior and exterior detailing to give your vehicle a fresh, well-maintained appearance.", features: ['Everything in Interior Detail', 'Everything in Exterior Detail', 'Engine bay cleaning', 'Paint clay bar treatment', 'Full interior shampoo & extraction', 'Paint protection coating', 'Priority scheduling & booking'], gradient: 'from-indigo-600 to-blue-900' }
+  { name: 'Full Detail', price: 249, duration: '4–5 hours', description: "Our Full Detail service combines interior and exterior detailing to give your vehicle a fresh, well-maintained appearance.", features: ['Everything in Interior Detail', 'Everything in Exterior Detail', 'Full interior shampoo & extraction', 'Spray ceramic sealant', 'Priority scheduling & booking'], gradient: 'from-indigo-600 to-blue-900' }
 ];
 
 export default function ServicesPage() {
@@ -21,7 +21,7 @@ export default function ServicesPage() {
             <p className="text-gray-500 max-w-2xl mx-auto text-lg">Three professional packages to keep your vehicle looking its best. All services include our satisfaction guarantee.</p>
             <div className="inline-flex items-center gap-2 bg-brand-blue/10 border border-brand-blue/20 rounded-full px-6 py-2.5 mt-4">
               <span className="text-brand-blue"><Icons.Tag /></span>
-              <span className="text-brand-blue font-semibold">First-time customers get 50% off any service!</span>
+              <span className="text-brand-blue font-semibold">First-time customers get 15% off any service!</span>
             </div>
           </div>
           <div className="space-y-8">
