@@ -1,5 +1,5 @@
 const Booking = require('../models/Booking');
-const nodemailer = require('nodemailer');
+const twilio = require('twilio');
 
 const PRICES = {
   'Interior Detail': 149,
@@ -7,46 +7,60 @@ const PRICES = {
   'Full Detail': 249
 };
 
-const sendEmail = async (to, subject, html) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-  });
-  await transporter.sendMail({ from: process.env.EMAIL_USER, to, subject, html });
+// SMS to Joshua when new booking comes in
+const notifyJoshua = async (booking, finalPrice) => {
+  try {
+    const client = twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN
+    );
+
+    const msg =
+`New Booking - PerfectTouch!
+Name: ${booking.customerName}
+Phone: ${booking.phone}
+Service: ${booking.service}
+Date: ${new Date(booking.date).toLocaleDateString()}
+Time: ${booking.timeSlot}
+Address: ${booking.address}
+Price: $${finalPrice}${booking.discountApplied ? ' (15% off)' : ''}`;
+
+    // Always send to Joshua's number
+    await client.messages.create({
+      from: process.env.TWILIO_FROM_NUMBER,
+      to: process.env.TWILIO_TO_NUMBER, // Joshua: +18458662430
+      body: msg
+    });
+
+    console.log('✅ Joshua notified via SMS');
+  } catch (err) {
+    console.error('SMS to Joshua error:', err.message);
+  }
 };
 
 exports.createBooking = async (req, res) => {
   try {
-    const { customerName, email, phone, service, vehicleType, vehicleMake,
-      vehicleModel, vehicleYear, date, timeSlot, address, notes, isFirstTime } = req.body;
+    const {
+      customerName, email, phone, service, vehicleType,
+      vehicleMake, vehicleModel, vehicleYear, date,
+      timeSlot, address, notes, isFirstTime
+    } = req.body;
 
     const basePrice = PRICES[service] || 0;
     const discountApplied = isFirstTime;
-    const finalPrice = discountApplied ? basePrice * 0.85 : basePrice;
+    const finalPrice = discountApplied
+      ? parseFloat((basePrice * 0.85).toFixed(2))
+      : basePrice;
 
     const booking = await Booking.create({
       customerName, email, phone, service, vehicleType,
-      vehicleMake, vehicleModel, vehicleYear, date, timeSlot,
-      address, notes, isFirstTime, price: basePrice,
-      discountApplied, finalPrice
+      vehicleMake, vehicleModel, vehicleYear, date,
+      timeSlot, address, notes, isFirstTime,
+      price: basePrice, discountApplied, finalPrice
     });
 
-    // Send confirmation email
-    try {
-      await sendEmail(email, 'Booking Confirmed - PerfectTouch Auto Detailing',
-        `<h2>Hi ${customerName}!</h2>
-        <p>Your booking is confirmed.</p>
-        <p><strong>Service:</strong> ${service}</p>
-        <p><strong>Date:</strong> ${new Date(date).toLocaleDateString()}</p>
-        <p><strong>Time:</strong> ${timeSlot}</p>
-        <p><strong>Price:</strong> $${finalPrice}${discountApplied ? ' (15% First-Time Discount Applied!)' : ''}</p>
-        <p>We'll come to you at: ${address}</p>
-        <p>Questions? Call us: 845-866-2430</p>`
-      );
-    } catch (emailErr) {
-      console.error('Email error:', emailErr.message);
-    }
+    // Notify Joshua about new booking
+    await notifyJoshua(booking, finalPrice);
 
     res.status(201).json(booking);
   } catch (err) {
@@ -82,9 +96,7 @@ exports.getBookingById = async (req, res) => {
 exports.updateBookingStatus = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      { new: true }
+      req.params.id, { status: req.body.status }, { new: true }
     );
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
     res.json(booking);
@@ -107,14 +119,16 @@ exports.getCalendarEvents = async (req, res) => {
     const { month, year } = req.query;
     const start = new Date(year, month - 1, 1);
     const end = new Date(year, month, 0);
-    const bookings = await Booking.find({ date: { $gte: start, $lte: end }, status: { $ne: 'Cancelled' } });
+    const bookings = await Booking.find({
+      date: { $gte: start, $lte: end },
+      status: { $ne: 'Cancelled' }
+    });
     const events = bookings.map(b => ({
       id: b._id,
       title: `${b.customerName} - ${b.service}`,
       date: b.date,
       time: b.timeSlot,
-      status: b.status,
-      color: b.status === 'Completed' ? '#22c55e' : b.status === 'Confirmed' ? '#3b82f6' : '#f59e0b'
+      status: b.status
     }));
     res.json(events);
   } catch (err) {
