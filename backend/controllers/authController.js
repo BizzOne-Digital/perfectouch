@@ -8,9 +8,28 @@ const generateToken = (id) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const admin = await Admin.findOne({ email });
+    console.log('Login attempt for email:', email);
 
-    if (!admin || !(await admin.matchPassword(password))) {
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is missing in environment variables');
+      return res.status(500).json({ message: 'Server misconfiguration: JWT_SECRET missing' });
+    }
+
+    const admin = await Admin.findOne({ email });
+    console.log('Admin found:', !!admin);
+
+    if (!admin) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    const isMatch = await admin.matchPassword(password);
+    console.log('Password match:', isMatch);
+
+    if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
@@ -21,12 +40,18 @@ exports.login = async (req, res) => {
       token: generateToken(admin._id)
     });
   } catch (err) {
+    console.error('LOGIN ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };
 
 exports.getMe = async (req, res) => {
-  res.json(req.admin);
+  try {
+    res.json(req.admin);
+  } catch (err) {
+    console.error('GET ME ERROR:', err);
+    res.status(500).json({ message: err.message });
+  }
 };
 
 exports.seedAdmin = async (req, res) => {
@@ -41,6 +66,7 @@ exports.seedAdmin = async (req, res) => {
     });
     res.json({ message: 'Admin created. Email: admin@perfecttouch.com | Password: PerfectTouch@2024' });
   } catch (err) {
+    console.error('SEED ADMIN ERROR:', err);
     res.status(500).json({ message: err.message });
   }
 };
