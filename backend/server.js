@@ -32,10 +32,10 @@ const connectDB = async () => {
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI, {
-      // keep connection lean for serverless
-      bufferCommands: false,
-    });
+    // bufferCommands ko default (true) rehne do — yeh mongoose ko queries
+    // buffer karne deta hai jab tak connection poori tarah ready na ho.
+    // Serverless cold-start mein false set karna race condition create karta hai.
+    const db = await mongoose.connect(process.env.MONGO_URI);
     isConnected = db.connections[0].readyState === 1;
     console.log('✅ MongoDB Connected');
   } catch (err) {
