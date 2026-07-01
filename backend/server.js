@@ -11,10 +11,24 @@ const app = express();
 // CORS
 // ---------------------------
 // NOTE: origin '*' aur credentials:true sath nahi chalte.
-// FRONTEND_URL ko Vercel env vars mein exact frontend domain set karo
-// e.g. https://perfecttouch-frontend.vercel.app
+// FRONTEND_URL ko Vercel env vars mein exact frontend domain(s) set karo.
+// Agar multiple domains chahiye, comma-separate karo.
+// e.g. https://perfecttouch-frontend.vercel.app,https://www.perfecttouchautodetailing.company
+const allowedOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((url) => url.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || true,
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS policy: Origin ${origin} not allowed`));
+  },
   credentials: true
 }));
 
