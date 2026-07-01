@@ -91,7 +91,7 @@ export default function Footer() {
       <div className="border-t border-gray-800 px-4 py-5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-gray-600">
           <p>© {new Date().getFullYear()} PerfectTouch Auto Detailing. All rights reserved.</p>
-          <p>Built for Sullivan County NY</p>
+          <p>Built for Sullivan County, NY</p>
         </div>
       </div>
     </footer>
