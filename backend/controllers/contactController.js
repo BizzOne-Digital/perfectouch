@@ -4,13 +4,16 @@ exports.sendContact = async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+      service: 'gmail',
+      host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+      port: Number(process.env.EMAIL_PORT || 587),
+      secure: false,
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      requireTLS: true
     });
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: 'perfecttouch.autodetailing29@gmail.com',
+      to: process.env.EMAIL_USER,
       subject: `New Contact Form Message from ${name}`,
       html: `
         <h3>New Contact Message - PerfectTouch Website</h3>

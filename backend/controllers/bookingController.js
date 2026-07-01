@@ -1,4 +1,5 @@
 const Booking = require('../models/Booking');
+const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
 const PRICES = {
@@ -38,6 +39,49 @@ Price: $${finalPrice}${booking.discountApplied ? ' (15% off)' : ''}`;
   }
 };
 
+const createMailTransport = () => nodemailer.createTransport({
+  service: 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: Number(process.env.EMAIL_PORT || 587),
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  requireTLS: true
+});
+
+const sendBookingEmail = async (booking, finalPrice) => {
+  try {
+    const transporter = createMailTransport();
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: `New Booking Request - ${booking.customerName}`,
+      html: `
+        <h3>New Booking Request</h3>
+        <p><strong>Name:</strong> ${booking.customerName}</p>
+        <p><strong>Email:</strong> ${booking.email || 'N/A'}</p>
+        <p><strong>Phone:</strong> ${booking.phone || 'N/A'}</p>
+        <p><strong>Service:</strong> ${booking.service}</p>
+        <p><strong>Date:</strong> ${new Date(booking.date).toLocaleDateString()}</p>
+        <p><strong>Time:</strong> ${booking.timeSlot}</p>
+        <p><strong>Address:</strong> ${booking.address || 'N/A'}</p>
+        <p><strong>Price:</strong> $${finalPrice}${booking.discountApplied ? ' (15% off)' : ''}</p>
+      `
+    };
+
+    if (booking.email) {
+      mailOptions.cc = booking.email;
+    }
+
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Booking email sent');
+  } catch (err) {
+    console.error('Booking email error:', err.message);
+  }
+};
+
 exports.createBooking = async (req, res) => {
   try {
     const {
@@ -61,6 +105,7 @@ exports.createBooking = async (req, res) => {
 
     // Notify Joshua about new booking
     await notifyJoshua(booking, finalPrice);
+    await sendBookingEmail(booking, finalPrice);
 
     res.status(201).json(booking);
   } catch (err) {

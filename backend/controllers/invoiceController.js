@@ -1,5 +1,6 @@
 const Invoice = require('../models/Invoice');
 const Booking = require('../models/Booking');
+const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
 const getClient = () => twilio(
@@ -13,6 +14,46 @@ const formatPhone = (phone) => {
   if (digits.length === 10) return `+1${digits}`;
   if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
   return `+${digits}`;
+};
+
+const createMailTransport = () => nodemailer.createTransport({
+  service: 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: Number(process.env.EMAIL_PORT || 587),
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  requireTLS: true
+});
+
+const sendInvoiceEmailNotification = async (invoice) => {
+  try {
+    const transporter = createMailTransport();
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: `Invoice #${invoice.invoiceNumber} - PerfectTouch Auto Detailing`,
+      html: `
+        <h3>Invoice Ready</h3>
+        <p>Hello ${invoice.customerName},</p>
+        <p>Your invoice for ${invoice.service || 'your service'} is ready.</p>
+        <p><strong>Total Amount:</strong> $${invoice.totalAmount}</p>
+        <p><strong>Due Date:</strong> ${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : 'N/A'}</p>
+        <p>Thank you for choosing PerfectTouch Auto Detailing.</p>
+      `
+    };
+
+    if (invoice.email) {
+      mailOptions.cc = invoice.email;
+    }
+
+    await transporter.sendMail(mailOptions);
+    console.log('✅ Invoice email sent');
+  } catch (err) {
+    console.error('Invoice email error:', err.message);
+  }
 };
 
 // Send SMS to CUSTOMER
@@ -144,6 +185,7 @@ Thank you for choosing PerfectTouch!`;
       sendWhatsAppToCustomer(invoice.phone, msg)
     ]);
 
+    await sendInvoiceEmailNotification(invoice);
     await Invoice.findByIdAndUpdate(invoice._id, { status: 'Sent' });
 
     res.json({ message: `Invoice sent to customer at ${invoice.phone}` });
