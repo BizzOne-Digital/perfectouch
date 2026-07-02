@@ -18,6 +18,7 @@ import AdminInvoices from './pages/admin/AdminInvoices';
 import AdminGallery from './pages/admin/AdminGallery';
 import AdminCalendar from './pages/admin/AdminCalendar';
 import AdminServices from './pages/admin/AdminServices';
+import AdminAddons from './pages/admin/AdminAddons';
 
 // Layout
 import AdminLayout from './components/admin/AdminLayout';
@@ -62,6 +63,7 @@ function App() {
             <Route path="gallery" element={<AdminGallery />} />
             <Route path="calendar" element={<AdminCalendar />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="addons" element={<AdminAddons />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

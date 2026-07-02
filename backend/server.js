@@ -82,6 +82,7 @@ app.use(async (req, res, next) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/bookings', require('./routes/bookingRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
+app.use('/api/addons', require('./routes/addonRoutes'));
 app.use('/api/invoices', require('./routes/invoiceRoutes'));
 app.use('/api/gallery', require('./routes/galleryRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));

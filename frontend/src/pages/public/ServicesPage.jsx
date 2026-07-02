@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/public/Navbar';
 import Footer from '../../components/public/Footer';
 import { Icons } from '../../components/public/Icons';
+import api from '../../utils/api';
 
 const SERVICES = [
   { name: 'Interior Detail', price: 149, duration: '2–3 hours', description: "Bring your vehicle's interior back to life with a deep cleaning designed to remove dirt, dust, and everyday buildup.", features: ['Full vacuum of seats, floors, and trunk', 'Shampoo upholstery & floor mats', 'Dashboard, console & trim wipe-down', 'Window cleaning (interior)', 'Door panel cleaning', 'Air vent detailing', 'Odor elimination treatment'], gradient: 'from-blue-600 to-blue-800' },
@@ -10,6 +12,12 @@ const SERVICES = [
 ];
 
 export default function ServicesPage() {
+  const [addons, setAddons] = useState([]);
+
+  useEffect(() => {
+    api.get('/addons').then(r => setAddons(r.data)).catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen font-body bg-gray-950">
       <Navbar />
@@ -64,6 +72,42 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
+
+          {addons.length > 0 && (
+            <div className="mt-24">
+              <div className="text-center mb-12">
+                <span className="text-brand-blue font-semibold text-sm uppercase tracking-widest">Customize Your Detail</span>
+                <h2 className="font-display text-4xl md:text-5xl font-bold text-white mt-2 mb-4">Popular <span className="text-brand-blue">Add-ons</span></h2>
+                <p className="text-gray-500 max-w-2xl mx-auto text-lg">Add any of these extras to your service for a more complete finish.</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {addons.map(a => (
+                  <div key={a._id} className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-brand-blue transition-all group">
+                    <div className="aspect-video bg-gray-800 relative overflow-hidden">
+                      {a.image ? (
+                        <img src={a.image} alt={a.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-700"><Icons.Image /></div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-brand-blue text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg">${a.price}</div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-display text-lg font-bold text-white">{a.name}</h3>
+                      {a.duration && (
+                        <div className="text-gray-500 text-sm flex items-center gap-1 mt-1"><Icons.Clock />{a.duration}</div>
+                      )}
+                      {a.description && <p className="text-gray-500 text-sm mt-2 leading-relaxed">{a.description}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center mt-10">
+                <Link to="/booking" className="btn-primary inline-flex items-center gap-2 px-8 py-3.5">
+                  Book & Add Extras <Icons.ArrowRight />
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <Footer />

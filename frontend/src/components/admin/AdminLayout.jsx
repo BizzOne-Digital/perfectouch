@@ -9,7 +9,8 @@ const NAV = [
   { to: '/admin/invoices', label: 'Invoices', icon: Icons.Invoice },
   { to: '/admin/calendar', label: 'Calendar', icon: Icons.Calendar },
   { to: '/admin/gallery', label: 'Gallery', icon: Icons.Image },
-  { to: '/admin/services', label: 'Services', icon: Icons.Settings }
+  { to: '/admin/services', label: 'Services', icon: Icons.Settings },
+  { to: '/admin/addons', label: 'Add-ons', icon: Icons.Plus }
 ];
 
 export default function AdminLayout() {
