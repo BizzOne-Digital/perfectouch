@@ -32,7 +32,11 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json({ limit: '50mb' }));
+// rawBody capture karo taake Square webhook ka HMAC signature verify ho sake
+app.use(express.json({
+  limit: '50mb',
+  verify: (req, res, buf) => { req.rawBody = buf; }
+}));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // ---------------------------

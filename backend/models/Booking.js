@@ -24,7 +24,20 @@ const bookingSchema = new mongoose.Schema({
   discountApplied: { type: Boolean, default: false },
   finalPrice: { type: Number },
   invoiceGenerated: { type: Boolean, default: false },
-  invoiceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Invoice' }
+  invoiceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Invoice' },
+
+  // ---- Square Deposit ----
+  depositPercent: { type: Number, default: 0 },       // e.g. 25 (%)
+  depositAmount: { type: Number, default: 0 },        // $ amount customer se maanga
+  depositStatus: {
+    type: String,
+    enum: ['NotRequired', 'Pending', 'Paid', 'Failed'],
+    default: 'NotRequired'
+  },
+  depositPaymentLinkId: { type: String },             // Square payment link id
+  depositPaymentUrl: { type: String },                // customer ko bheja jaane wala link
+  depositOrderId: { type: String },                   // Square order id (webhook match ke liye)
+  depositPaidAt: { type: Date }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);
