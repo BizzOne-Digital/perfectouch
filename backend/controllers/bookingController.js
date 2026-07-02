@@ -1,6 +1,5 @@
 const Booking = require('../models/Booking');
 const nodemailer = require('nodemailer');
-const twilio = require('twilio');
 const { createDepositPaymentLink, verifyWebhookSignature } = require('../services/squareService');
 
 const PRICES = {
@@ -11,102 +10,6 @@ const PRICES = {
 
 // Deposit % (default 25). Client Square dashboard se amount aata hai.
 const DEPOSIT_PERCENT = Number(process.env.SQUARE_DEPOSIT_PERCENT || 25);
-
-const twilioClient = () => twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
-
-const formatPhone = (phone) => {
-  const digits = String(phone || '').replace(/\D/g, '');
-  if (digits.length === 10) return `+1${digits}`;
-  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
-  return `+${digits}`;
-};
-
-// Customer ko deposit link SMS + WhatsApp pe bhejo
-const sendDepositLinkToCustomer = async (booking) => {
-  const msg =
-`PerfectTouch Auto Detailing
-Hi ${booking.customerName}!
-
-Aapki booking request mil gayi hai.
-Service: ${booking.service}
-Date: ${new Date(booking.date).toLocaleDateString()} at ${booking.timeSlot}
-
-Booking confirm karne ke liye $${booking.depositAmount} deposit (${booking.depositPercent}%) yahan pay karein:
-${booking.depositPaymentUrl}
-
-Baaqi balance service ke baad. Thank you!`;
-
-  const client = twilioClient();
-  await Promise.allSettled([
-    client.messages.create({
-      from: process.env.TWILIO_FROM_NUMBER,
-      to: formatPhone(booking.phone),
-      body: msg
-    }),
-    client.messages.create({
-      from: `whatsapp:${process.env.TWILIO_FROM_NUMBER}`,
-      to: `whatsapp:${formatPhone(booking.phone)}`,
-      body: msg
-    })
-  ]);
-
-  // Email bhi (agar customer ne di ho)
-  if (booking.email) {
-    try {
-      const transporter = createMailTransport();
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: booking.email,
-        cc: process.env.EMAIL_USER,
-        subject: `Confirm your booking - $${booking.depositAmount} deposit`,
-        html: `
-          <h3>Almost done, ${booking.customerName}!</h3>
-          <p>Service: <strong>${booking.service}</strong></p>
-          <p>Date: ${new Date(booking.date).toLocaleDateString()} at ${booking.timeSlot}</p>
-          <p>To confirm your booking, please pay a <strong>$${booking.depositAmount}</strong> deposit (${booking.depositPercent}%):</p>
-          <p><a href="${booking.depositPaymentUrl}" style="background:#0a84ff;color:#fff;padding:12px 20px;text-decoration:none;border-radius:6px;">Pay Deposit</a></p>
-          <p>The remaining balance is due after your service. Thank you for choosing PerfectTouch!</p>
-        `
-      });
-    } catch (err) {
-      console.error('Deposit email error:', err.message);
-    }
-  }
-};
-
-// SMS to Joshua when new booking comes in
-const notifyJoshua = async (booking, finalPrice) => {
-  try {
-    const client = twilio(
-      process.env.TWILIO_ACCOUNT_SID,
-      process.env.TWILIO_AUTH_TOKEN
-    );
-
-    const msg =
-`New Booking - PerfectTouch!
-Name: ${booking.customerName}
-Phone: ${booking.phone}
-Service: ${booking.service}
-Date: ${new Date(booking.date).toLocaleDateString()}
-Time: ${booking.timeSlot}
-Address: ${booking.address}
-Price: $${finalPrice}${booking.discountApplied ? ' (15% off)' : ''}`;
-
-    // Always send to Joshua's number
-    await client.messages.create({
-      from: process.env.TWILIO_FROM_NUMBER,
-      to: process.env.TWILIO_TO_NUMBER, // Joshua: +18458662430
-      body: msg
-    });
-
-    console.log('✅ Joshua notified via SMS');
-  } catch (err) {
-    console.error('SMS to Joshua error:', err.message);
-  }
-};
 
 const createMailTransport = () => nodemailer.createTransport({
   service: 'gmail',
@@ -151,6 +54,31 @@ const sendBookingEmail = async (booking, finalPrice) => {
   }
 };
 
+// Customer ko deposit payment link EMAIL pe bhejo
+const sendDepositLinkToCustomer = async (booking) => {
+  if (!booking.email) {
+    console.log('⚠️ Deposit link: customer email nahi hai, skip');
+    return;
+  }
+  const transporter = createMailTransport();
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: booking.email,
+    cc: process.env.EMAIL_USER,
+    subject: `Confirm your booking - $${booking.depositAmount} deposit`,
+    html: `
+      <h3>Almost done, ${booking.customerName}!</h3>
+      <p>Service: <strong>${booking.service}</strong></p>
+      <p>Date: ${new Date(booking.date).toLocaleDateString()} at ${booking.timeSlot}</p>
+      <p>To confirm your booking, please pay a <strong>$${booking.depositAmount}</strong> deposit (${booking.depositPercent}%):</p>
+      <p><a href="${booking.depositPaymentUrl}" style="background:#0a84ff;color:#fff;padding:12px 20px;text-decoration:none;border-radius:6px;">Pay Deposit</a></p>
+      <p>Or open this link: ${booking.depositPaymentUrl}</p>
+      <p>The remaining balance is due after your service. Thank you for choosing PerfectTouch!</p>
+    `
+  });
+  console.log('✅ Deposit link email sent to', booking.email);
+};
+
 exports.createBooking = async (req, res) => {
   try {
     const {
@@ -172,8 +100,7 @@ exports.createBooking = async (req, res) => {
       price: basePrice, discountApplied, finalPrice
     });
 
-    // Notify Joshua about new booking
-    await notifyJoshua(booking, finalPrice);
+    // Notify Joshua about new booking (email)
     await sendBookingEmail(booking, finalPrice);
 
     // ---- Square deposit link (percentage of final price) ----
@@ -305,19 +232,24 @@ exports.squareWebhook = async (req, res) => {
         booking.status = 'Confirmed';
         await booking.save();
 
-        // Joshua ko batao ke deposit aa gaya
+        // Joshua ko email pe batao ke deposit aa gaya
         try {
-          await twilioClient().messages.create({
-            from: process.env.TWILIO_FROM_NUMBER,
-            to: process.env.TWILIO_TO_NUMBER,
-            body: `Deposit RECEIVED - PerfectTouch
-${booking.customerName} ne $${booking.depositAmount} deposit pay kar diya.
-Service: ${booking.service}
-Date: ${new Date(booking.date).toLocaleDateString()} ${booking.timeSlot}
-Booking ab CONFIRMED hai.`
+          const transporter = createMailTransport();
+          await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: process.env.EMAIL_USER,
+            subject: `Deposit RECEIVED - ${booking.customerName} ($${booking.depositAmount})`,
+            html: `
+              <h3>Deposit Received - Booking Confirmed</h3>
+              <p><strong>${booking.customerName}</strong> ne $${booking.depositAmount} deposit pay kar diya.</p>
+              <p>Service: ${booking.service}</p>
+              <p>Date: ${new Date(booking.date).toLocaleDateString()} at ${booking.timeSlot}</p>
+              <p>Phone: ${booking.phone || 'N/A'}</p>
+              <p>Booking status ab <strong>CONFIRMED</strong> hai.</p>
+            `
           });
-        } catch (smsErr) {
-          console.error('Deposit-paid SMS error:', smsErr.message);
+        } catch (mailErr) {
+          console.error('Deposit-paid email error:', mailErr.message);
         }
       }
     }
