@@ -15,11 +15,11 @@ exports.getGallery = async (req, res) => {
 
 exports.addGalleryItem = async (req, res) => {
   try {
-    const { title, type, description, service, beforeImage, afterImage, videoUrl } = req.body;
+    const { title, type, description, service, beforeImage, afterImage, videoUrl, image } = req.body;
     const item = await Gallery.create({
       title, type, description, service,
       beforeImage, afterImage, videoUrl,
-      image: req.file ? req.file.path : null,
+      image: req.file ? req.file.path : (image || null),
       cloudinaryId: req.file ? req.file.filename : null
     });
     res.status(201).json(item);
